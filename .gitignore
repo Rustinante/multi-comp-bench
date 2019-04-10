@@ -2,3 +2,13 @@
 .DS_Store
 bin/
 build/
+*.gz
+*.tar
+*.pdf
+bolt
+*.bed
+*.bim
+*.indivs
+EUR_subset*
+*.log
+*.stats
