@@ -26,15 +26,15 @@ def bench_bolt_reml(exe_path, snp_assignment_filename, bed_filename, bim_filenam
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('exe_path', type=str)
-    parser.add_argument('--snp-assign', '-s', type=str,
+    parser.add_argument('--snp-assign', '-s', type=str, required=True,
                         help='The file assigning each SNP to a variance component, '
                              'in which each whitespace-delimited line contains a SNP ID (typically an rs number) '
                              'followed by the name of the variance component to which it belongs.')
-    parser.add_argument('--bed', type=str)
-    parser.add_argument('--bim', type=str)
-    parser.add_argument('--fam', type=str)
-    parser.add_argument('--pheno', type=str, help='for the phenoFile option')
-    parser.add_argument('--pheno-col', '-c', type=int,
+    parser.add_argument('--bed', type=str, required=True)
+    parser.add_argument('--bim', type=str, required=True)
+    parser.add_argument('--fam', type=str, required=True)
+    parser.add_argument('--pheno', type=str, required=True, help='for the phenoFile option')
+    parser.add_argument('--pheno-col', '-c', type=int, required=True,
                         help='phenotypes may be provided in a separate whitespace-delimited file '
                              '(specified with --phenoFile) with the first line containing column headers and '
                              'subsequent lines containing records, one per individual. '
