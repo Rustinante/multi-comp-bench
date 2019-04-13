@@ -2,8 +2,7 @@ import argparse
 
 
 def chrom_to_number(chrom):
-    if chrom.startswith('chr'):
-        tail = chrom[3:]
+    def to_int(tail):
         if tail.isnumeric():
             return int(tail)
         else:
@@ -13,8 +12,11 @@ def chrom_to_number(chrom):
                 return 24
             else:
                 raise ValueError(f'unrecognized chromosome: {chrom}')
+
+    if chrom.lower().startswith('chr'):
+        return to_int(chrom[3:])
     else:
-        return int(chrom)
+        return to_int(chrom)
 
 
 def partition(bim_filename, out):
