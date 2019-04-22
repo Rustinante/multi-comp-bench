@@ -21,6 +21,7 @@ def bench_bolt_reml(exe_path, snp_assignment_filename, bed_filename, bim_filenam
                 '--phenoCol', str(pheno_col)])
     dt = time.time() - time_stamp
     print(f'bolt-reml took: {dt:.2f} seconds')
+    return dt
 
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('plink_path', type=str, help='path to the plink executable')
     parser.add_argument('bfile', type=str, help='the prefix for the bed bim fam files')
-    parser.add_argument('num_people', type=int)
+    parser.add_argument('num_people', type=int, help='the number of individuals to be used in the benchmark')
     parser.add_argument('--out', '-o', type=str, help='output bfile prefix')
     args = parser.parse_args()
     generate_subset(plink_path=args.plink_path, bfile=args.bfile, num_people=args.num_people, out=args.out)
