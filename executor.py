@@ -17,7 +17,7 @@ def run(bolt_path, plink_path, bfile, num_people, pheno_filename, pheno_col, out
             f'num_people: {num_people}\n'
             f'pheno_filename: {pheno_filename}\n'
             f'pheno_col: {pheno_col}\n'
-            f'out: {out}')
+            f'out: {out}\n')
     print(info)
 
     generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=out)
@@ -30,7 +30,8 @@ def run(bolt_path, plink_path, bfile, num_people, pheno_filename, pheno_col, out
     dt = bench_bolt_reml(bolt_path, snp_assignment_filename, out + '.bed', out + '.bim', out + '.fam',
                          pheno_filename, pheno_col)
     with open(f'{out}.{num_people}.bench', 'w') as file:
-        file.write(f'BOLT-REML took {dt} sec')
+        file.write(info)
+        file.write(f'BOLT-REML took {dt} sec\n')
     print_time()
 
 
