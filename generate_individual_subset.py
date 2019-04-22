@@ -13,7 +13,7 @@ def generate_subset(plink_path, bfile, num_people, out):
     print(f'creating a temp fam file for the subset of {num_people} individuals at {keep}')
     with open(bfile + '.fam', 'r') as fam_file, open(keep, 'w') as temp_fam:
         for i, line in zip(range(num_people), fam_file):
-            temp_fam.write(f'{line}\n')
+            temp_fam.write(line)
 
     check_call([cmd, '--make-bed', '--bfile', bfile, '--keep', keep, '--out', out])
 
