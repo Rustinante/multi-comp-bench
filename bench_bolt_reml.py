@@ -18,7 +18,7 @@ def bench_bolt_reml(exe_path, snp_assignment_filename, bed_filename, bim_filenam
                 '--bim', bim_filename,
                 '--fam', fam_filename,
                 '--phenoFile', pheno_filename,
-                '--phenoCol', str(pheno_col)])
+                '--phenoCol', pheno_col])
     dt = time.time() - time_stamp
     print(f'bolt-reml took: {dt:.2f} seconds')
     return dt
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     parser.add_argument('--bim', type=str, required=True)
     parser.add_argument('--fam', type=str, required=True)
     parser.add_argument('--pheno', type=str, required=True, help='for the phenoFile option')
-    parser.add_argument('--pheno-col', '-c', type=int, required=True,
+    parser.add_argument('--pheno-col', '-c', type=str, required=True,
                         help='phenotypes may be provided in a separate whitespace-delimited file '
                              '(specified with --phenoFile) with the first line containing column headers and '
                              'subsequent lines containing records, one per individual. '

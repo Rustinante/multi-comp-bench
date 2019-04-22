@@ -46,7 +46,7 @@ if __name__ == '__main__':
     parser.add_argument('num_people', type=int, help='the number of individuals to be used in the benchmark')
     parser.add_argument('--out', '-o', help='analysis output prefix')
     parser.add_argument('--pheno', type=str, required=True, help='for the phenoFile option')
-    parser.add_argument('--pheno-col', '-c', type=int, required=True,
+    parser.add_argument('--pheno-col', '-c', type=str, required=True,
                         help='phenotypes may be provided in a separate whitespace-delimited file '
                              '(specified with --phenoFile) with the first line containing column headers and '
                              'subsequent lines containing records, one per individual. '
