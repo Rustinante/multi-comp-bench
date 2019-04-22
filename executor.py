@@ -9,18 +9,21 @@ def print_time():
     print(time.strftime('%a %b %d %Y %H:%M:%S UTC%z', time.localtime()))
 
 
-def run(bolt_path, plink_path, bfile, num_people, pheno_filename, pheno_col, out):
+def run(bolt_path, plink_path, bfile, num_people, pheno_path, pheno_col, out):
     info = (f'=> generating subset individual data\n'
             f'bolt_path: {bolt_path}\n'
             f'plink_path: {plink_path}\n'
             f'bfile: {bfile}\n'
             f'num_people: {num_people}\n'
-            f'pheno_filename: {pheno_filename}\n'
+            f'pheno_filename: {pheno_path}\n'
             f'pheno_col: {pheno_col}\n'
             f'out: {out}\n')
     print(info)
 
-    generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=out)
+    _, pheno_temp = generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=out,
+                                    pheno_path=pheno_path)
+    print(f'subset pheno file: {pheno_temp}')
+
     print('=> assigning the SNP components by chromosome')
     snp_assignment_filename = out + '.snps_assignment'
     partition(out + '.bim', snp_assignment_filename)
@@ -28,7 +31,7 @@ def run(bolt_path, plink_path, bfile, num_people, pheno_filename, pheno_col, out
 
     print_time()
     dt = bench_bolt_reml(bolt_path, snp_assignment_filename, out + '.bed', out + '.bim', out + '.fam',
-                         pheno_filename, pheno_col)
+                         pheno_temp, pheno_col)
     with open(f'{out}.{num_people}.bench', 'w') as file:
         file.write(info)
         file.write(f'BOLT-REML took {dt} sec\n')
@@ -57,5 +60,5 @@ if __name__ == '__main__':
                              'will output a warning if these sets do not match.')
     args = parser.parse_args()
     run(bolt_path=args.bolt_path, plink_path=args.plink_path, bfile=args.bfile, num_people=args.num_people,
-        pheno_filename=args.pheno, pheno_col=args.pheno_col,
+        pheno_path=args.pheno, pheno_col=args.pheno_col,
         out=f'{args.out}_{args.num_people}')

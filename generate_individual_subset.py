@@ -3,7 +3,7 @@ from subprocess import check_call
 import os
 
 
-def generate_subset(plink_path, bfile, num_people, out):
+def generate_subset(plink_path, bfile, num_people, out, pheno_path=None):
     if plink_path.startswith('.') or plink_path.startswith('/'):
         cmd = plink_path
     else:
@@ -16,6 +16,15 @@ def generate_subset(plink_path, bfile, num_people, out):
             temp_fam.write(line)
 
     check_call([cmd, '--make-bed', '--bfile', bfile, '--keep', keep, '--out', out])
+
+    pheno_keep = None
+    if pheno_path is not None:
+        pheno_keep = out + f'.subset_{num_people}.pheno.temp'
+        with open(pheno_path, 'r') as file, open(pheno_keep, 'w') as temp_pheno:
+            for i, line in zip(range(num_people), file):
+                temp_pheno.write(line)
+
+    return keep, pheno_keep
 
 
 if __name__ == '__main__':
