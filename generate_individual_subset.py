@@ -9,7 +9,7 @@ def generate_subset(plink_path, bfile, num_people, out):
     else:
         cmd = os.path.join('.', plink_path)
 
-    keep = bfile + f'.subset_{num_people}.temp'
+    keep = out + f'.subset_{num_people}.temp'
     print(f'creating a temp fam file for the subset of {num_people} individuals at {keep}')
     with open(bfile + '.fam', 'r') as fam_file, open(keep, 'w') as temp_fam:
         for i, line in zip(range(num_people), fam_file):
