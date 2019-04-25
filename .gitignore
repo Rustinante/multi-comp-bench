@@ -19,5 +19,6 @@ EUR_subset*
 *.snps_assignment
 __pycache__
 .pversion
-output_cache
+file_cache
 *.bench
+output
