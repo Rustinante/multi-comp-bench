@@ -3,6 +3,7 @@ from generate_individual_subset import generate_subset
 from partition_by_chrom import partition
 from bench_bolt_reml import bench_bolt_reml
 import time
+import sys
 
 
 def print_time():
@@ -19,17 +20,19 @@ def run(bolt_path, plink_path, bfile, num_people, pheno_path, pheno_col, out):
             f'pheno_col: {pheno_col}\n'
             f'out: {out}\n')
     print(info)
+    sys.stdout.flush()
 
     _, pheno_temp = generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=out,
                                     pheno_path=pheno_path)
     print(f'subset pheno file: {pheno_temp}')
 
     print('=> assigning the SNP components by chromosome')
+    sys.stdout.flush()
     snp_assignment_filename = out + '.snps_assignment'
     partition(out + '.bim', snp_assignment_filename)
     print('=> running BOLT-REML')
-
     print_time()
+    sys.stdout.flush()
     dt = bench_bolt_reml(bolt_path, snp_assignment_filename, out + '.bed', out + '.bim', out + '.fam',
                          pheno_temp, pheno_col)
     with open(f'{out}.{num_people}.bench', 'w') as file:
