@@ -20,3 +20,4 @@ EUR_subset*
 __pycache__
 .pversion
 output_cache
+*.bench
