@@ -12,3 +12,11 @@ bolt
 EUR_subset*
 *.log
 *.stats
+*.fam
+*.temp
+*.log
+*.txt
+*.snps_assignment
+__pycache__
+.pversion
+output_cache
