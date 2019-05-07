@@ -1,9 +1,10 @@
 import argparse
+import sys
+import time
+
+from bench_bolt_reml import bench_bolt_reml
 from generate_individual_subset import generate_subset
 from partition_by_chrom import partition
-from bench_bolt_reml import bench_bolt_reml
-import time
-import sys
 
 
 def print_time():

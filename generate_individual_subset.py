@@ -1,21 +1,17 @@
 import argparse
 from subprocess import check_call
-import os
+
+from util import path_to_cmd
 
 
 def generate_subset(plink_path, bfile, num_people, out, pheno_path=None):
-    if plink_path.startswith('.') or plink_path.startswith('/'):
-        cmd = plink_path
-    else:
-        cmd = os.path.join('.', plink_path)
-
     keep = out + f'.subset_{num_people}.temp'
     print(f'creating a temp fam file for the subset of {num_people} individuals at {keep}')
     with open(bfile + '.fam', 'r') as fam_file, open(keep, 'w') as temp_fam:
         for i, line in zip(range(num_people), fam_file):
             temp_fam.write(line)
 
-    check_call([cmd, '--make-bed', '--bfile', bfile, '--keep', keep, '--out', out])
+    check_call([path_to_cmd(plink_path), '--make-bed', '--bfile', bfile, '--keep', keep, '--out', out])
 
     pheno_keep = None
     if pheno_path is not None:

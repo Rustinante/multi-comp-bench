@@ -1,18 +1,15 @@
 import argparse
 import time
 from subprocess import check_call
-import os
+
+from util import path_to_cmd
 
 
 def bench_bolt_reml(exe_path, snp_assignment_filename, bed_filename, bim_filename, fam_filename,
                     pheno_filename, pheno_col):
     time_stamp = time.time()
-    if exe_path.startswith('.') or exe_path.startswith('/'):
-        cmd = exe_path
-    else:
-        cmd = os.path.join('.', exe_path)
 
-    check_call([cmd, '--reml',
+    check_call([path_to_cmd(exe_path), '--reml',
                 '--modelSnps', snp_assignment_filename,
                 '--bed', bed_filename,
                 '--bim', bim_filename,
