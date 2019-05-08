@@ -1,4 +1,5 @@
 import os
+import time
 
 
 def path_to_cmd(exe_path):
@@ -7,3 +8,7 @@ def path_to_cmd(exe_path):
     else:
         cmd = os.path.join('.', exe_path)
     return cmd
+
+
+def print_time():
+    print(time.strftime('%a %b %d %Y %H:%M:%S UTC%z', time.localtime()))

@@ -1,11 +1,24 @@
 import argparse
-import time
 import os
+import sys
+import time
 from subprocess import check_call
-from util import path_to_cmd
+
+from generate_individual_subset import generate_subset
+from util import path_to_cmd, print_time
 
 
-def run(gcta_path, bfile, out):
+def run(gcta_path, plink_path, bfile, pheno_path, num_people, out):
+    info = (f'gcta_path: {gcta_path}\n'
+            f'plink_path: {plink_path}\n'
+            f'bfile: {bfile}\n'
+            f'pheno_path: {pheno_path}\n'
+            f'num_people: {num_people}\n'
+            f'out: {out}')
+
+    print(info)
+    sys.stdout.flush()
+
     out = os.path.join('file_cache', out)
     print(f'out_path: {out}')
     chrom_set = set()
@@ -17,18 +30,43 @@ def run(gcta_path, bfile, out):
     print(f'{len(chrom_set)} chromosomes in total')
     chrom_list = sorted(list(chrom_set))
 
+    _, pheno_temp = generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=out,
+                                    pheno_path=pheno_path)
+    print(f'subset pheno file: {pheno_temp}')
+
+    print_time()
     start_time = time.time()
     for chrom in chrom_list:
         print(f'chr{chrom}')
         check_call([path_to_cmd(gcta_path), '--bfile', bfile, '--chr', chrom, '--make-grm', '--out', f'{out}_{chrom}'])
+        print_time()
 
     grm_dt = time.time() - start_time
+    print(f'GRM computation took {grm_dt} seconds')
+
+    grm_catalog = f'{out}_grm_catalog.txt'
+    with open(grm_catalog, 'w') as file:
+        for chrom in chrom_list:
+            file.write(f'{out}_{chrom}\n')
+
+    start_time = time.time()
+    out_path = os.path.join('output', f'gcta_{out}_{num_people}')
+    check_call([path_to_cmd(gcta_path), '--reml', '--mgrm', grm_catalog, '--pheno', pheno_temp, '--out', out_path])
+
+    gcta_dt = time.time() - start_time
+    print(f'GCTA reml took: {gcta_dt} seconds')
+    print_time()
+    print(f'Total time: {grm_dt + gcta_dt} seconds')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('gcta_path', type=str)
     parser.add_argument('bfile', type=str)
+    parser.add_argument('plink_path', type=str, help='path to the plink executable')
+    parser.add_argument('num_people', type=int, help='the number of individuals to be used in the benchmark')
+    parser.add_argument('--pheno', type=str, required=True, help='path to the phenotype files')
     parser.add_argument('--out', '-o', type=str)
     args = parser.parse_args()
-    run(args.gcta_path, args.bfile, args.out)
+    run(gcta_path=args.gcta_path, plink_path=args.plink_path,
+        bfile=args.bfile, pheno_path=args.pheno, num_people=args.num_people, out=args.out)

@@ -1,14 +1,10 @@
 import argparse
 import sys
-import time
 
 from bench_bolt_reml import bench_bolt_reml
 from generate_individual_subset import generate_subset
 from partition_by_chrom import partition
-
-
-def print_time():
-    print(time.strftime('%a %b %d %Y %H:%M:%S UTC%z', time.localtime()))
+from util import print_time
 
 
 def run(bolt_path, plink_path, bfile, num_people, pheno_path, pheno_col, out):
