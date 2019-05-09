@@ -39,6 +39,7 @@ def run(gcta_path, plink_path, bfile, pheno_path, num_people, out_id):
     start_time = time.time()
     for chrom in chrom_list:
         print(f'chr{chrom}')
+        sys.stdout.flush()
         check_call(
             [path_to_cmd(gcta_path), '--bfile', out_path, '--chr', chrom, '--make-grm', '--out', f'{out_path}_{chrom}'])
         print_time()
@@ -62,6 +63,13 @@ def run(gcta_path, plink_path, bfile, pheno_path, num_people, out_id):
     print(f'GCTA reml took: {gcta_dt} seconds')
     print_time()
     print(f'Total time: {grm_dt + gcta_dt} seconds')
+
+    bencher_file = f'{out_path}.{num_people}.bench'
+    with open(bencher_file, 'w') as file:
+        file.write(info)
+        file.write(f'GRM computation took {grm_dt} sec\n')
+        file.write(f'GCTA REML took {gcta_dt} sec\n')
+        file.write(f'total time: {grm_dt + gcta_dt} sec\n')
 
 
 if __name__ == '__main__':
