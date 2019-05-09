@@ -38,7 +38,7 @@ def run(gcta_path, plink_path, bfile, pheno_path, num_people, out):
     start_time = time.time()
     for chrom in chrom_list:
         print(f'chr{chrom}')
-        check_call([path_to_cmd(gcta_path), '--bfile', bfile, '--chr', chrom, '--make-grm', '--out', f'{out}_{chrom}'])
+        check_call([path_to_cmd(gcta_path), '--bfile', out, '--chr', chrom, '--make-grm', '--out', f'{out}_{chrom}'])
         print_time()
 
     grm_dt = time.time() - start_time
