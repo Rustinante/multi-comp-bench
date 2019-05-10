@@ -31,6 +31,9 @@ def run(gcta_path, plink_path, bfile, pheno_path, num_people, out_id):
     print(f'{len(chrom_set)} chromosomes in total')
     chrom_list = sorted(list(chrom_set))
 
+    print(f'\n=> generating data for a subset of {num_people} individuals')
+    print_time()
+    sys.stdout.flush()
     _, pheno_temp = generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=file_cache_out_path,
                                     pheno_path=pheno_path)
     print(f'subset pheno file: {pheno_temp}')
