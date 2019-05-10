@@ -16,12 +16,12 @@ def run(gcta_path, plink_path, bfile, pheno_path, num_people, out_id):
             f'num_people: {num_people}\n'
             f'out: {out_id}')
 
-    print(info)
-    sys.stdout.flush()
-
     os.makedirs('file_cache', exist_ok=True)
     file_cache_out_path = os.path.join('file_cache', f'{out_id}_{num_people}')
-    print(f'out_path: {file_cache_out_path}')
+    print(info)
+    print(f'file_cache_out_path: {file_cache_out_path}')
+    sys.stdout.flush()
+
     chrom_set = set()
     with open(f'{bfile}.bim', 'r') as bim_file:
         for line in bim_file:
@@ -38,38 +38,48 @@ def run(gcta_path, plink_path, bfile, pheno_path, num_people, out_id):
                                     pheno_path=pheno_path)
     print(f'subset pheno file: {pheno_temp}')
 
-    print_time()
     start_time = time.time()
     chrom_time_list = []
     for chrom in chrom_list:
-        print(f'chr{chrom}')
+        print(f'\n=> chr{chrom}')
+        print_time()
         sys.stdout.flush()
         chrom_time_start = time.time()
         check_call(
             [path_to_cmd(gcta_path), '--bfile', file_cache_out_path, '--chr', chrom, '--make-grm',
              '--out', f'{file_cache_out_path}_{chrom}'])
         chrom_time_list.append((chrom, time.time() - chrom_time_start))
+        print(f'\n=> chr{chrom} finished')
         print_time()
+        sys.stdout.flush()
 
     grm_dt = time.time() - start_time
     print(f'GRM computation took {grm_dt} seconds')
+    sys.stdout.flush()
 
     grm_catalog = os.path.join('file_cache', f'{out_id}_{num_people}_grm_catalog.txt')
     with open(grm_catalog, 'w') as file:
         for chrom in chrom_list:
             file.write(f'{file_cache_out_path}_{chrom}\n')
 
-    start_time = time.time()
-    print('\n=> running GCTA reml')
-    print_time()
     os.makedirs('output', exist_ok=True)
     log_path_prefix = os.path.join('output', f'{out_id}_{num_people}')
-    check_call([path_to_cmd(gcta_path), '--reml', '--mgrm', grm_catalog, '--pheno', pheno_temp, '--out', log_path_prefix])
+    print(f'log_path_prefix: {log_path_prefix}')
+
+    print('\n=> running GCTA reml')
+    print_time()
+    sys.stdout.flush()
+    start_time = time.time()
+    check_call(
+        [path_to_cmd(gcta_path), '--reml', '--mgrm', grm_catalog, '--pheno', pheno_temp, '--out', log_path_prefix])
+
+    print('\n=> GCTA reml finished')
+    print_time()
 
     gcta_dt = time.time() - start_time
     print(f'GCTA reml took: {gcta_dt} seconds')
-    print_time()
     print(f'Total time: {grm_dt + gcta_dt} seconds')
+    sys.stdout.flush()
 
     bencher_file = f'{log_path_prefix}.bench'
     with open(bencher_file, 'w') as file:
