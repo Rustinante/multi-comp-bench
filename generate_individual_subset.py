@@ -5,23 +5,36 @@ from util import path_to_cmd
 
 
 def generate_subset(plink_path, bfile, num_people, out, pheno_path=None):
-    keep = out + f'.subset_{num_people}.fam'
-    print(f'creating a temp fam file for the subset of {num_people} individuals at {keep}')
-    with open(bfile + '.fam', 'r') as fam_file, open(keep, 'w') as temp_fam:
+    subset_fam_path = out + f'.subset_{num_people}.fam'
+    print(f'\n=> creating a temp fam file for the subset of {num_people} individuals at {subset_fam_path}')
+    individual_id_list = []
+    with open(bfile + '.fam', 'r') as fam_file, open(subset_fam_path, 'w') as temp_fam:
         for i, line in zip(range(num_people), fam_file):
             temp_fam.write(line)
+            if pheno_path is not None:
+                individual_id_list.append(line.split()[1])
 
-    check_call([path_to_cmd(plink_path), '--make-bed', '--bfile', bfile, '--keep', keep, '--out', out])
+    check_call([path_to_cmd(plink_path), '--make-bed', '--bfile', bfile, '--keep', subset_fam_path, '--out', out])
 
-    pheno_keep = None
+    individual_id_set = set(individual_id_list)
+    pheno_dict = {}
+    subset_pheno_path = None
     if pheno_path is not None:
-        pheno_keep = out + f'.subset_{num_people}.pheno'
-        with open(pheno_path, 'r') as file, open(pheno_keep, 'w') as temp_pheno:
-            # num_people + 1 to account for the header line
-            for i, line in zip(range(num_people + 1), file):
-                temp_pheno.write(line)
+        subset_pheno_path = out + f'.subset_{num_people}.pheno'
+        print(f'\n=> writing subset phenotypes to {subset_pheno_path}')
+        with open(pheno_path, 'r') as file:
+            # get rid of the header line
+            file.readline()
+            for line in file:
+                individual_id = line.split()[1]
+                if individual_id in individual_id_set:
+                    pheno_dict[individual_id] = line
 
-    return keep, pheno_keep
+        with open(subset_pheno_path, 'w') as temp_pheno:
+            for iid in individual_id_list:
+                temp_pheno.write(pheno_dict[iid])
+
+    return subset_fam_path, subset_pheno_path
 
 
 if __name__ == '__main__':
