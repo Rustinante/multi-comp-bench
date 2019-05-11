@@ -17,7 +17,8 @@ def generate_subset(plink_path, bfile, num_people, out, pheno_path=None):
     if pheno_path is not None:
         pheno_keep = out + f'.subset_{num_people}.pheno'
         with open(pheno_path, 'r') as file, open(pheno_keep, 'w') as temp_pheno:
-            for i, line in zip(range(num_people), file):
+            # num_people + 1 to account for the header line
+            for i, line in zip(range(num_people + 1), file):
                 temp_pheno.write(line)
 
     return keep, pheno_keep
