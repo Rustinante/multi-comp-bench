@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 from bench_bolt_reml import bench_bolt_reml
@@ -7,7 +8,7 @@ from partition_by_chrom import partition
 from util import print_time
 
 
-def run(bolt_path, plink_path, bfile, num_people, pheno_path, pheno_col, out):
+def run(bolt_path, plink_path, bfile, num_people, pheno_path, pheno_col, out_id):
     info = (f'=> generating subset individual data\n'
             f'bolt_path: {bolt_path}\n'
             f'plink_path: {plink_path}\n'
@@ -15,24 +16,34 @@ def run(bolt_path, plink_path, bfile, num_people, pheno_path, pheno_col, out):
             f'num_people: {num_people}\n'
             f'pheno_filename: {pheno_path}\n'
             f'pheno_col: {pheno_col}\n'
-            f'out: {out}\n')
+            f'out: {out_id}\n')
     print(info)
     sys.stdout.flush()
 
-    _, pheno_temp = generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=out,
+    file_cache_out_path = os.path.join('file_cache', f'{out_id}_{num_people}')
+    _, pheno_temp = generate_subset(plink_path=plink_path, bfile=bfile, num_people=num_people, out=file_cache_out_path,
                                     pheno_path=pheno_path)
     print(f'subset pheno file: {pheno_temp}')
 
     print('=> assigning the SNP components by chromosome')
     sys.stdout.flush()
-    snp_assignment_filename = out + '.snps_assignment'
-    partition(out + '.bim', snp_assignment_filename)
+
+    snp_assignment_filename = file_cache_out_path + '.snps_assignment'
+    partition(file_cache_out_path + '.bim', snp_assignment_filename)
+
     print('=> running BOLT-REML')
     print_time()
     sys.stdout.flush()
-    dt = bench_bolt_reml(bolt_path, snp_assignment_filename, out + '.bed', out + '.bim', out + '.fam',
+    dt = bench_bolt_reml(bolt_path, snp_assignment_filename,
+                         file_cache_out_path + '.bed',
+                         file_cache_out_path + '.bim',
+                         file_cache_out_path + '.fam',
                          pheno_temp, pheno_col)
-    with open(f'{out}.{num_people}.bench', 'w') as file:
+
+    log_path_prefix = os.path.join('output', f'{out_id}_{num_people}')
+    print(f'log_path_prefix: {log_path_prefix}')
+
+    with open(f'{log_path_prefix}.bench', 'w') as file:
         file.write(info)
         file.write(f'BOLT-REML took {dt} sec\n')
     print_time()
@@ -61,4 +72,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     run(bolt_path=args.bolt_path, plink_path=args.plink_path, bfile=args.bfile, num_people=args.num_people,
         pheno_path=args.pheno, pheno_col=args.pheno_col,
-        out=f'{args.out}_{args.num_people}')
+        out_id=f'{args.out}_{args.num_people}')
