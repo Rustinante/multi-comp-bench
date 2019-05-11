@@ -23,16 +23,16 @@ def generate_subset(plink_path, bfile, num_people, out, pheno_path=None):
         subset_pheno_path = out + f'.subset_{num_people}.pheno'
         print(f'\n=> writing subset phenotypes to {subset_pheno_path}')
         with open(pheno_path, 'r') as file:
-            # get rid of the header line
-            file.readline()
+            header = file.readline()
             for line in file:
                 individual_id = line.split()[1]
                 if individual_id in individual_id_set:
                     pheno_dict[individual_id] = line
 
-        with open(subset_pheno_path, 'w') as temp_pheno:
+        with open(subset_pheno_path, 'w') as subset_pheno_file:
+            subset_pheno_file.write(header)
             for iid in individual_id_list:
-                temp_pheno.write(pheno_dict[iid])
+                subset_pheno_file.write(pheno_dict[iid])
 
     return subset_fam_path, subset_pheno_path
 
