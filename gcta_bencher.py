@@ -48,8 +48,9 @@ def run(gcta_path, plink_path, bfile, pheno_path, num_people, out_id):
         check_call(
             [path_to_cmd(gcta_path), '--bfile', file_cache_out_path, '--chr', chrom, '--make-grm',
              '--out', f'{file_cache_out_path}_{chrom}'])
-        chrom_time_list.append((chrom, time.time() - chrom_time_start))
-        print(f'\n=> chr{chrom} finished')
+        chrom_time = time.time() - chrom_time_start
+        chrom_time_list.append((chrom, chrom_time))
+        print(f'\n=> chr{chrom} finished in {chrom_time} sec')
         print_time()
         sys.stdout.flush()
 
