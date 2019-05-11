@@ -55,7 +55,7 @@ if __name__ == '__main__':
     parser.add_argument('plink_path', type=str, help='path to the plink executable')
     parser.add_argument('bfile', type=str, help='the prefix for the bed bim fam files')
     parser.add_argument('num_people', type=int, help='the number of individuals to be used in the benchmark')
-    parser.add_argument('--out', '-o', help='analysis output prefix')
+    parser.add_argument('--out-id', '-o', help='analysis output prefix')
     parser.add_argument('--pheno', type=str, required=True, help='for the phenoFile option')
     parser.add_argument('--pheno-col', '-c', type=str, required=True,
                         help='phenotypes may be provided in a separate whitespace-delimited file '
@@ -71,5 +71,4 @@ if __name__ == '__main__':
                              'will output a warning if these sets do not match.')
     args = parser.parse_args()
     run(bolt_path=args.bolt_path, plink_path=args.plink_path, bfile=args.bfile, num_people=args.num_people,
-        pheno_path=args.pheno, pheno_col=args.pheno_col,
-        out_id=f'{args.out}_{args.num_people}')
+        pheno_path=args.pheno, pheno_col=args.pheno_col, out_id=args.out_id)
